@@ -5,7 +5,8 @@ import mysql.connector
 app = Flask(__name__)
 CORS(app)
 
-db = mysql.connector.connect(
+def get_db_connection():
+    return mysql.connector.connect(
     host="localhost",
     user="root",
     password="Heermulchandani25.",
@@ -13,6 +14,7 @@ db = mysql.connector.connect(
     autocommit=True
 )
 
+db = get_db_connection()
 cursor = db.cursor(dictionary=True)
 
 @app.route("/")
