@@ -7,11 +7,11 @@ CORS(app)
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="mysql.railway.internal",
+        host="switchback.proxy.rlwy.net",
         user="root",
         password="ljhbWvJHRaipNkxLDVGfejWkNVVUxczS",
         database="railway",
-        port=3306,
+        port=58895,
         autocommit=True
     )
 
