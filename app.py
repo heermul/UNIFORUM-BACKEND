@@ -7,12 +7,13 @@ CORS(app)
 
 def get_db_connection():
     return mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Heermulchandani25.",
-    database="uniforum",
-    autocommit=True
-)
+        host="mysql.railway.internal",
+        user="root",
+        password="ljhbWvJHRaipNkxLDVGfejWkNVVUxczS",
+        database="railway",
+        port=3306,
+        autocommit=True
+    )
 
 db = get_db_connection()
 cursor = db.cursor(dictionary=True)
