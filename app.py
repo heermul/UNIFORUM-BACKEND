@@ -11,12 +11,9 @@ def get_db_connection():
         user="root",
         password="ljhbWvJHRaipNkxLDVGfejWkNVVUxczS",
         database="railway",
-        port=58895,
-        autocommit=True
+        port=58895
     )
 
-db = get_db_connection()
-cursor = db.cursor(dictionary=True)
 
 @app.route("/")
 def home():
@@ -25,12 +22,24 @@ def home():
 
 @app.route("/events", methods=["GET"])
 def get_events():
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+
     cursor.execute("SELECT * FROM events")
     data = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
     return jsonify(data)
+
 
 @app.route("/events_table")
 def events_table():
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
 
     cursor.execute("SELECT * FROM events")
     data = cursor.fetchall()
@@ -61,10 +70,18 @@ def events_table():
         """
 
     html += "</table>"
+
+    cursor.close()
+    db.close()
+
     return html
+
 
 @app.route("/add_event", methods=["POST"])
 def add_event():
+
+    db = get_db_connection()
+    cursor = db.cursor()
 
     data = request.get_json()
 
@@ -82,6 +99,10 @@ def add_event():
     )
 
     cursor.execute(query, values)
+    db.commit()
+
+    cursor.close()
+    db.close()
 
     return jsonify({"message": "Event added successfully"})
 
@@ -89,10 +110,18 @@ def add_event():
 @app.route("/approve_event/<int:event_id>", methods=["POST"])
 def approve_event(event_id):
 
+    db = get_db_connection()
+    cursor = db.cursor()
+
     cursor.execute(
         "UPDATE events SET status='approved' WHERE id=%s",
         (event_id,)
     )
+
+    db.commit()
+
+    cursor.close()
+    db.close()
 
     return jsonify({"message": "Event approved"})
 
@@ -100,10 +129,18 @@ def approve_event(event_id):
 @app.route("/reject_event/<int:event_id>", methods=["POST"])
 def reject_event(event_id):
 
+    db = get_db_connection()
+    cursor = db.cursor()
+
     cursor.execute(
         "UPDATE events SET status='rejected' WHERE id=%s",
         (event_id,)
     )
+
+    db.commit()
+
+    cursor.close()
+    db.close()
 
     return jsonify({"message": "Event rejected"})
 
