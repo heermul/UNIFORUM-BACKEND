@@ -13,6 +13,7 @@ def get_db_connection():
         database="railway",
         port=58895,
         connection_timeout=5
+        autocommit=True
     )
 
 
@@ -81,34 +82,37 @@ def events_table():
     return html
 
 
-@app.route("/add_event", methods=["POST"])
+@@app.route("/add_event", methods=["POST"])
 def add_event():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
 
-    db = get_db_connection()
-    cursor = db.cursor()
+        data = request.get_json()
 
-    data = request.get_json()
+        query = """
+        INSERT INTO events (title, forum, event_date, venue, description)
+        VALUES (%s, %s, %s, %s, %s)
+        """
 
-    query = """
-    INSERT INTO events (title, forum, event_date, venue, description)
-    VALUES (%s, %s, %s, %s, %s)
-    """
+        values = (
+            data["title"],
+            data["forum"],
+            data["event_date"],
+            data["venue"],
+            data["description"]
+        )
 
-    values = (
-        data["title"],
-        data["forum"],
-        data["event_date"],
-        data["venue"],
-        data["description"]
-    )
+        cursor.execute(query, values)
+        db.commit()
 
-    cursor.execute(query, values)
-    db.commit()
+        cursor.close()
+        db.close()
 
-    cursor.close()
-    db.close()
+        return jsonify({"message": "Event added successfully"})
 
-    return jsonify({"message": "Event added successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 
 @app.route("/approve_event/<int:event_id>", methods=["POST"])
@@ -147,7 +151,3 @@ def reject_event(event_id):
     db.close()
 
     return jsonify({"message": "Event rejected"})
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
