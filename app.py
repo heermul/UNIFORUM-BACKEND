@@ -12,7 +12,7 @@ def get_db_connection():
         password="ljhbWvJHRaipNkxLDVGfejWkNVVUxczS",
         database="railway",
         port=58895,
-        connection_timeout=5
+        connection_timeout=5,
         autocommit=True
     )
 
@@ -82,7 +82,7 @@ def events_table():
     return html
 
 
-@@app.route("/add_event", methods=["POST"])
+@app.route("/add_event", methods=["POST"])
 def add_event():
     try:
         db = get_db_connection()
