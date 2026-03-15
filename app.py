@@ -11,7 +11,8 @@ def get_db_connection():
         user="root",
         password="ljhbWvJHRaipNkxLDVGfejWkNVVUxczS",
         database="railway",
-        port=58895
+        port=58895,
+        connection_timeout=5
     )
 
 
@@ -22,17 +23,20 @@ def home():
 
 @app.route("/events", methods=["GET"])
 def get_events():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
 
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM events")
+        data = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM events")
-    data = cursor.fetchall()
+        cursor.close()
+        db.close()
 
-    cursor.close()
-    db.close()
+        return jsonify(data)
 
-    return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 
 @app.route("/events_table")
