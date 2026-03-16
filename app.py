@@ -152,3 +152,28 @@ def reject_event(event_id):
     db.close()
 
     return jsonify({"message": "Event rejected"})
+
+@app.route("/update_status/<int:event_id>", methods=["POST"])
+def update_status(event_id):
+
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        data = request.get_json()
+        new_status = data["status"]
+
+        cursor.execute(
+            "UPDATE events SET status=%s WHERE id=%s",
+            (new_status, event_id)
+        )
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return jsonify({"message": "Status updated"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
