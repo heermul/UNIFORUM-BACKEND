@@ -162,11 +162,18 @@ def update_status(event_id):
 
         data = request.get_json()
         new_status = data["status"]
+        reason = data.get("reason", None)
 
-        cursor.execute(
-            "UPDATE events SET status=%s WHERE id=%s",
-            (new_status, event_id)
-        )
+        if reason:
+            cursor.execute(
+                "UPDATE events SET status=%s, reason=%s WHERE id=%s",
+                (new_status, reason, event_id)
+            )
+        else:
+            cursor.execute(
+                "UPDATE events SET status=%s WHERE id=%s",
+                (new_status, event_id)
+            )
 
         db.commit()
 
