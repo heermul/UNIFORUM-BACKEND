@@ -184,3 +184,23 @@ def update_status(event_id):
 
     except Exception as e:
         return jsonify({"error": str(e)})
+@app.route("/delete_event/<int:event_id>", methods=["DELETE"])
+def delete_event(event_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        cursor.execute(
+            "DELETE FROM events WHERE id=%s",
+            (event_id,)
+        )
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return jsonify({"message": "Event deleted"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
