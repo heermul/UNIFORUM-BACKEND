@@ -29,7 +29,26 @@ def get_events():
         cursor = db.cursor(dictionary=True)
 
         cursor.execute("SELECT * FROM events")
-        data = cursor.fetchall()
+        rows = cursor.fetchall()
+
+        data = []
+        
+        for e in rows:
+            data.append({
+                "id": e["id"],
+                "title": e["title"],
+                "forum": e["forum"],
+                "event_date": str(e["event_date"]),
+                "event_time": e.get("event_time"),
+                "venue": e["venue"],
+                "description": e["description"],
+                "status": e["status"],
+                "reason": e.get("reason"),
+                "participants": e.get("participants"),
+                "guests": e.get("guests"),
+                "feedback": e.get("feedback"),
+                "images": e.get("images")
+            })
 
         cursor.close()
         db.close()
@@ -155,35 +174,28 @@ def reject_event(event_id):
 
 @app.route("/update_status/<int:event_id>", methods=["POST"])
 def update_status(event_id):
-
     try:
         db = get_db_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
 
         data = request.get_json()
         new_status = data["status"]
-        reason = data.get("reason", None)
+        reason = data.get("reason")
 
-        if reason:
-            cursor.execute(
-                "UPDATE events SET status=%s, reason=%s WHERE id=%s",
-                (new_status, reason, event_id)
-            )
-        else:
-            cursor.execute(
-                "UPDATE events SET status=%s WHERE id=%s",
-                (new_status, event_id)
-            )
+        cursor.execute(
+            "UPDATE events SET status=%s, reason=%s WHERE id=%s",
+            (new_status, reason, event_id)
+        )
 
         db.commit()
-
         cursor.close()
         db.close()
 
-        return jsonify({"message": "Status updated"})
+        return jsonify({"message": "Status updated successfully"})
 
     except Exception as e:
         return jsonify({"error": str(e)})
+        
 @app.route("/delete_event/<int:event_id>", methods=["DELETE"])
 def delete_event(event_id):
     try:
@@ -201,6 +213,34 @@ def delete_event(event_id):
         db.close()
 
         return jsonify({"message": "Event deleted"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/add_past_event/<int:event_id>", methods=["POST"])
+def add_past_event(event_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        data = request.get_json()
+
+        participants = data.get("participants")
+        guests = data.get("guests")
+        feedback = data.get("feedback")
+        images = data.get("images")  # should be JSON string
+
+        cursor.execute("""
+            UPDATE events
+            SET participants=%s, guests=%s, feedback=%s, images=%s
+            WHERE id=%s
+        """, (participants, guests, feedback, images, event_id))
+
+        db.commit()
+        cursor.close()
+        db.close()
+
+        return jsonify({"message": "Past event data saved"})
 
     except Exception as e:
         return jsonify({"error": str(e)})
