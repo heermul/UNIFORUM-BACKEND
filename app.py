@@ -110,8 +110,9 @@ def add_event():
         data = request.get_json()
 
         query = """
-        INSERT INTO events (title, forum, event_date, event_time, venue, description)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO events 
+        (title, forum, event_date, event_time, venue, description, status)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
 
         values = (
@@ -120,7 +121,8 @@ def add_event():
             data["event_date"],
             data["event_time"],
             data["venue"],
-            data["description"]
+            data["description"],
+            "pending"
         )
 
         cursor.execute(query, values)
