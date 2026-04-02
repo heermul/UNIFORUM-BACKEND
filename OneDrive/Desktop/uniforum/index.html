@@ -953,13 +953,29 @@ if(!events[forumName]) return;
 });
         });
 console.log("EVENTS OBJECT:", events); 
-          
+    localStorage.setItem("events_backup", JSON.stringify(events));
         renderForumEvents();
         renderPastEvents();
         renderCalendar();
         updateCounts();  
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+    console.error("Backend failed:", err);
+
+    // Try loading saved events
+    const saved = localStorage.getItem("events_backup");
+    if(saved){
+        console.log("Using cached events");
+        Object.assign(events, JSON.parse(saved));
+        renderForumEvents();
+        renderPastEvents();
+        renderCalendar();
+        updateCounts();
+    } else {
+        document.getElementById("eventList").innerHTML =
+            "<p>Backend sleeping. Showing last available data.</p>";
+    }
+});
 }
 
 /* ✅ ADD THESE HERE */
@@ -1014,6 +1030,7 @@ fetch("https://uniforum-backend.onrender.com/add_event", {
     fetchEventsFromBackend();
 })
 .catch(err => console.error(err));
+
 }
 
 function deleteEvent(id){
