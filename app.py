@@ -246,3 +246,7 @@ def add_past_event(event_id):
 
     except Exception as e:
         return jsonify({"error": str(e)})
+        
+@app.route("/ping")
+def ping():
+    return "alive"
