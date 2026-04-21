@@ -5,13 +5,12 @@ import psycopg2
 import psycopg2.extras
 import os
 
-DATABASE_URL = "postgresql://postgres.pxtbjwqhkcbpwvvugwxn:HeerMulchandani.25!?@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+DATABASE_URL = "postgresql://postgres.pxtbjwqhkcbpwvvugwxn:HeerMulchandani.25!?@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
 
 def get_db_connection():
     return psycopg2.connect(
         DATABASE_URL,
-        sslmode="require",
-        connect_timeout=10,
+        connect_timeout=30,
     )
 
 app = Flask(__name__)
