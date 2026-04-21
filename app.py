@@ -26,7 +26,7 @@ def home():
 def get_events():
     try:
         db = get_db_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         cursor.execute("SELECT * FROM events")
         rows = cursor.fetchall()
@@ -34,12 +34,11 @@ def get_events():
         cursor.close()
         db.close()
 
-        return jsonify(rows)
+        return jsonify([dict(row) for row in rows])
 
     except Exception as e:
         print("DB ERROR:", e)
         return jsonify({"error": "Database temporarily unavailable"}), 500
-
 
 @app.route("/events_table")
 def events_table():
