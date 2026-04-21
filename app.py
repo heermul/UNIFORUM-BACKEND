@@ -8,7 +8,7 @@ CORS(app)
 
 def get_db_connection():
     return psycopg2.connect(
-        "postgresql://postgres:YOUR_PASSWORD@db.pxtbjwqhkcbpwvvugwxn.supabase.co:5432/postgres"
+        "postgresql://postgres:Heermulchandani.25@db.pxtbjwqhkcbpwvvugwxn.supabase.co:5432/postgres"
     )
 
 
