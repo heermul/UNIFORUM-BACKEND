@@ -1,19 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
+import psycopg2
 
 app = Flask(__name__)
 CORS(app)
 
 def get_db_connection():
-    return mysql.connector.connect(
-        host="switchback.proxy.rlwy.net",
-        user="root",
-        password="ljhbWvJHRaipNkxLDVGfejWkNVVUxczS",
-        database="railway",
-        port=58895,
-        connection_timeout=5,
-        autocommit=True
+    return psycopg2.connect(
+        "postgresql://postgres:YOUR_PASSWORD@db.pxtbjwqhkcbpwvvugwxn.supabase.co:5432/postgres"
     )
 
 
@@ -26,28 +21,27 @@ def home():
 def get_events():
     try:
         db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
+        cursor = db.cursor
 
         cursor.execute("SELECT * FROM events")
         rows = cursor.fetchall()
 
         data = []
-        
         for e in rows:
             data.append({
-                "id": e["id"],
-                "title": e["title"],
-                "forum": e["forum"],
-                "event_date": str(e["event_date"]),
-                "event_time": e.get("event_time"),
-                "venue": e["venue"],
-                "description": e["description"],
-                "status": e["status"],
-                "reason": e.get("reason"),
-                "participants": e.get("participants"),
-                "guests": e.get("guests"),
-                "feedback": e.get("feedback"),
-                "images": e.get("images")
+                "id": e[0],
+                "title": e[1],
+                "forum": e[2],
+                "event_date": str(e[3]),
+                "event_time": e[4],
+                "venue": e[5],
+                "description": e[6],
+                "status": e[7],
+                "reason": e[8],
+                "participants": e[9],
+                "guests": e[10],
+                "feedback": e[11],
+                "images": e[12]
             })
 
         cursor.close()
