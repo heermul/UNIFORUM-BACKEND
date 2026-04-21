@@ -10,8 +10,8 @@ DATABASE_URL = os.getenv("postgresql://postgres.pxtbjwqhkcbpwvvugwxn:HeerMulchan
 def get_db_connection():
     return psycopg2.connect(
         DATABASE_URL,
+        sslmode="require",
         connect_timeout=10,
-        options='-c statement_timeout=10000'
     )
 
 app = Flask(__name__)
