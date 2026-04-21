@@ -8,8 +8,8 @@ CORS(app)
 
 def get_db_connection():
     return psycopg2.connect(
-        "postgresql://postgres:Heermulchandani.25@db.pxtbjwqhkcbpwvvugwxn.supabase.co:5432/postgres"
-    )
+        "postgresql://postgres:Heermulchandani.25@db.pxtbjwqhkcbpwvvugwxn.supabase.co:5432/postgres?sslmode=require"
+)
 
 
 @app.route("/")
