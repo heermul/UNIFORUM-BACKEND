@@ -6,10 +6,17 @@ import psycopg2
 app = Flask(__name__)
 CORS(app)
 
+import psycopg2
+
 def get_db_connection():
     return psycopg2.connect(
-        "postgresql://postgres:Heermulchandani.25@db.pxtbjwqhkcbpwvvugwxn.supabase.co:5432/postgres?sslmode=require"
-)
+        host="aws-0-ap-south-1.pooler.supabase.com",
+        database="postgres",
+        user="postgres.pxtbjwqhkcbpwvvugwxn",
+        password="Heermulchandani.25",
+        port=6543,
+        sslmode="require"
+    )
 
 
 @app.route("/")
