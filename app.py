@@ -23,7 +23,7 @@ def home():
 def get_events():
     try:
         db = get_db_connection()
-        cursor = db.cursor
+        cursor = db.cursor()
 
         cursor.execute("SELECT * FROM events")
         rows = cursor.fetchall()
