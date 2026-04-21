@@ -4,10 +4,14 @@ import mysql.connector
 import psycopg2
 import psycopg2.extras
 
-DATABASE_URL = "postgresql://postgres.pxtbjwqhkcbpwvvugwxn:[YOUR-PASSWORD]@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
+DATABASE_URL = "postgresql://postgres.pxtbjwqhkcbpwvvugwxn:Heermulchandani.25@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
 
 def get_db_connection():
-    return psycopg2.connect(DATABASE_URL)
+    return psycopg2.connect(
+        DATABASE_URL,
+        connect_timeout=10,
+        options='-c statement_timeout=10000'
+    )
 
 app = Flask(__name__)
 CORS(app)
@@ -27,32 +31,14 @@ def get_events():
         cursor.execute("SELECT * FROM events")
         rows = cursor.fetchall()
 
-        data = []
-        for e in rows:
-            data.append({
-                "id": e[0],
-                "title": e[1],
-                "forum": e[2],
-                "event_date": str(e[3]),
-                "event_time": e[4],
-                "venue": e[5],
-                "description": e[6],
-                "status": e[7],
-                "reason": e[8],
-                "participants": e[9],
-                "guests": e[10],
-                "feedback": e[11],
-                "images": e[12]
-            })
-
         cursor.close()
         db.close()
 
-        return jsonify(data)
+        return jsonify(rows)
 
     except Exception as e:
-        print("ERROR:", e)
-        return jsonify({"error": str(e)})
+        print("DB ERROR:", e)
+        return jsonify({"error": "Database temporarily unavailable"}), 500
 
 
 @app.route("/events_table")
@@ -250,3 +236,7 @@ def add_past_event(event_id):
 @app.route("/ping")
 def ping():
     return "alive"
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "alive"})
