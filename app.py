@@ -5,7 +5,7 @@ import psycopg2
 import psycopg2.extras
 import os
 
-DATABASE_URL = os.getenv("postgresql://postgres.pxtbjwqhkcbpwvvugwxn:HeerMulchandani.25!?@aws-1-ap-south-1.pooler.supabase.com:6543/postgres")
+DATABASE_URL = os.getenv("postgresql://postgres:HeerMulchandani.25!?@db.pxtbjwqhkcbpwvvugwxn.supabase.co:5432/postgres")
 
 def get_db_connection():
     return psycopg2.connect(
