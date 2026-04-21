@@ -52,49 +52,54 @@ def get_events():
         return jsonify(data)
 
     except Exception as e:
+        print("ERROR:", e)
         return jsonify({"error": str(e)})
 
 
 @app.route("/events_table")
 def events_table():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
 
-    db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM events")
+        rows = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM events")
-    data = cursor.fetchall()
-
-    html = """
-    <h2>UNIFORUM Events</h2>
-    <table border="1" cellpadding="10">
-    <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Forum</th>
-        <th>Date</th>
-        <th>Venue</th>
-        <th>Status</th>
-    </tr>
-    """
-
-    for e in data:
-        html += f"""
+        html = """
+        <h2>UNIFORUM Events</h2>
+        <table border="1" cellpadding="10">
         <tr>
-            <td>{e['id']}</td>
-            <td>{e['title']}</td>
-            <td>{e['forum']}</td>
-            <td>{e['event_date']}</td>
-            <td>{e['venue']}</td>
-            <td>{e['status']}</td>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Forum</th>
+            <th>Date</th>
+            <th>Venue</th>
+            <th>Status</th>
         </tr>
         """
 
-    html += "</table>"
+        for e in rows:
+            html += f"""
+            <tr>
+                <td>{e[0]}</td>
+                <td>{e[1]}</td>
+                <td>{e[2]}</td>
+                <td>{e[3]}</td>
+                <td>{e[5]}</td>
+                <td>{e[7]}</td>
+            </tr>
+            """
 
-    cursor.close()
-    db.close()
+        html += "</table>"
 
-    return html
+        cursor.close()
+        db.close()
+
+        return html
+
+    except Exception as e:
+        print("ERROR:", e)
+        return f"Error: {str(e)}"
 
 
 @app.route("/add_event", methods=["POST"])
