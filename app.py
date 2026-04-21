@@ -2,16 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
 import psycopg2
+import psycopg2.extras
+
+DATABASE_URL = "postgresql://postgres.pxtbjwqhkcbpwvvugwxn:[YOUR-PASSWORD]@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
+
+def get_db_connection():
+    return psycopg2.connect(DATABASE_URL)
 
 app = Flask(__name__)
 CORS(app)
-
-import psycopg2
-
-def get_db_connection():
-    return psycopg2.connect(
-        "postgresql://postgres.pxtbjwqhkcbpwvvugwxn:Heermulchandani.25@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
-    )
 
 
 @app.route("/")
@@ -179,7 +178,7 @@ def reject_event(event_id):
 def update_status(event_id):
     try:
         db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
+        cursor = db.cursor()
 
         data = request.get_json()
         new_status = data["status"]
